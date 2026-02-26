@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Accident Black Spot Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --red: #c0392b;
+      --red-dark: #922b21;
+      --red-light: #e74c3c;
+      --black: #0d0d0d;
+      --dark: #1a1a1a;
+      --mid: #2c2c2c;
+      --white: #f5f5f0;
+      --grey: #888;
+      --card-bg: #1f1f1f;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--red-dark);
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 18px,
+        rgba(0,0,0,0.08) 18px,
+        rgba(0,0,0,0.08) 36px
+      );
+      padding: 60px 40px 50px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 4px solid var(--red-light);
+    }
+
+    header::before {
+      content: '⚠';
+      position: absolute;
+      font-size: 320px;
+      opacity: 0.04;
+      left: -40px;
+      top: -60px;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(42px, 8vw, 88px);
+      letter-spacing: 3px;
+      color: #fff;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      animation: fadeDown 0.8s ease both;
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      animation: fadeDown 0.8s 0.2s ease both;
+    }
+
+    .header-badge {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 6px 18px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 2px;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      animation: fadeDown 0.8s 0.4s ease both;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--dark);
+      border-bottom: 2px solid var(--red);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    nav a {
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      padding: 16px 28px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: all 0.2s;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: var(--red-light);
+      transition: width 0.25s;
+    }
+
+    nav a:hover { color: #fff; background: rgba(255,255,255,0.04); }
+    nav a:hover::after { width: 100%; }
+
+    /* ── SECTIONS ── */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 30px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--red-light);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(32px, 5vw, 52px);
+      letter-spacing: 2px;
+      color: #fff;
+      margin-bottom: 30px;
+      line-height: 1;
+    }
+
+    .divider {
+      width: 50px; height: 3px;
+      background: var(--red);
+      margin-bottom: 30px;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .about-card {
+      background: var(--card-bg);
+      border-left: 4px solid var(--red);
+      border-radius: 4px;
+      padding: 36px 40px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+    }
+
+    .about-card p { color: rgba(255,255,255,0.75); }
+
+    .about-stat {
+      background: rgba(192,57,43,0.1);
+      border: 1px solid rgba(192,57,43,0.25);
+      border-radius: 4px;
+      padding: 20px 24px;
+      text-align: center;
+    }
+
+    .about-stat .num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px;
+      color: var(--red-light);
+      line-height: 1;
+    }
+
+    .about-stat .lbl {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--grey);
+      margin-top: 4px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* ── BLACK SPOT CARDS ── */
+    #blackspots { border-top: 1px solid rgba(255,255,255,0.07); }
+
+    .cards-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .spot-card {
+      background: var(--card-bg);
+      border-radius: 6px;
+      border-top: 3px solid var(--red);
+      padding: 28px 26px;
+      flex: 1 1 220px;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.35);
+      transition: transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .spot-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(192,57,43,0.06), transparent);
+      pointer-events: none;
+    }
+
+    .spot-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.5);
+    }
+
+    .spot-card .location-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 1px;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .spot-card .cause {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 14px;
+    }
+
+    .severity {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 2px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .severity.high   { background: rgba(231,76,60,0.2);  color: #e74c3c; border: 1px solid rgba(231,76,60,0.4); }
+    .severity.medium { background: rgba(230,126,34,0.2); color: #e67e22; border: 1px solid rgba(230,126,34,0.4); }
+    .severity.low    { background: rgba(241,196,15,0.2); color: #f1c40f; border: 1px solid rgba(241,196,15,0.4); }
+
+    .spot-card .pin {
+      position: absolute;
+      top: 16px; right: 18px;
+      font-size: 22px;
+      opacity: 0.35;
+    }
+
+    /* ── TABLE ── */
+    #data { border-top: 1px solid rgba(255,255,255,0.07); }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 6px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+    }
+
+    thead tr {
+      background: var(--red-dark);
+    }
+
+    thead th {
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      font-weight: 600;
+      border-bottom: 2px solid var(--red-light);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: background 0.15s;
+    }
+
+    tbody tr:nth-child(even) { background: rgba(255,255,255,0.025); }
+    tbody tr:hover { background: rgba(192,57,43,0.1); cursor: default; }
+
+    tbody td {
+      padding: 14px 20px;
+      color: rgba(255,255,255,0.75);
+      font-size: 14px;
+    }
+
+    tbody td:first-child {
+      color: var(--grey);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ── TIPS ── */
+    #safety { border-top: 1px solid rgba(255,255,255,0.07); }
+
+    .tips-card {
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 40px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .tip-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .tip-item:hover { background: rgba(255,255,255,0.04); }
+
+    .tip-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(192,57,43,0.15);
+      border: 1px solid rgba(192,57,43,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .tip-text { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.5; }
+
+    /* ── REPORT FORM ── */
+    #report { border-top: 1px solid rgba(255,255,255,0.07); }
+
+    .form-card {
+      background: var(--card-bg);
+      border-radius: 6px;
+      border-left: 4px solid var(--red);
+      padding: 44px 48px;
+      max-width: 600px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    .form-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(231,76,60,0.1);
+      border: 1px solid rgba(231,76,60,0.2);
+      border-radius: 3px;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 1px;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      padding: 14px 16px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s, background 0.2s;
+      outline: none;
+      margin-bottom: 24px;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--red-light);
+      background: rgba(192,57,43,0.06);
+    }
+
+    textarea { resize: vertical; min-height: 110px; }
+
+    button[type="submit"] {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 14px 36px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 2px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    button[type="submit"]:hover { background: var(--red-light); transform: translateY(-2px); }
+    button[type="submit"]:active { transform: translateY(0); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0a0a0a;
+      border-top: 2px solid var(--red-dark);
+      padding: 36px 40px;
+      text-align: center;
+      color: rgba(255,255,255,0.35);
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
+    footer span { color: var(--red-light); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      nav { flex-wrap: wrap; }
+      nav a { padding: 12px 16px; font-size: 11px; }
+      .about-card, .tips-card { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .form-card { padding: 28px 22px; }
+      section { padding: 50px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-badge">Road Safety Initiative</div>
+  <h1>Accident Black Spot Portal</h1>
+  <p>Identifying &amp; Eliminating Dangerous Road Zones Across the Region</p>
+</header>
+
+<!-- NAV -->
+<nav>
+  <a href="#about">About</a>
+  <a href="#blackspots">Black Spots</a>
+  <a href="#data">Data</a>
+  <a href="#safety">Safety Tips</a>
+  <a href="#report">Report</a>
+</nav>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="fade-in">
+    <div class="section-label">Overview</div>
+    <h2>What Is an Accident Black Spot?</h2>
+    <div class="divider"></div>
+    <div class="about-card">
+      <div>
+        <p>An <strong>accident black spot</strong> is a specific location on a road or highway where a disproportionately high number of traffic accidents occur compared to similar road sections. These zones are considered extremely dangerous due to recurring patterns of collision, injury, and fatality.</p>
+        <br/>
+        <p>Black spots are identified through careful analysis of historical accident data, road geometry, traffic volume, and environmental factors. Understanding these zones allows authorities and planners to implement targeted safety measures to save lives.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="about-stat">
+          <div class="num">38%</div>
+          <div class="lbl">of fatalities at known spots</div>
+        </div>
+        <div class="about-stat">
+          <div class="num">5+</div>
+          <div class="lbl">accidents define a black spot</div>
+        </div>
+        <div class="about-stat">
+          <div class="num">70%</div>
+          <div class="lbl">preventable with intervention</div>
+        </div>
+        <div class="about-stat">
+          <div class="num">3x</div>
+          <div class="lbl">higher risk than average roads</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLACK SPOTS -->
+<section id="blackspots">
+  <div class="fade-in">
+    <div class="section-label">Locations</div>
+    <h2>Accident-Prone Black Spots</h2>
+    <div class="divider"></div>
+    <div class="cards-flex">
+      <div class="spot-card">
+        <div class="pin">📍</div>
+        <div class="location-name">NH-44 Ambala Bypass</div>
+        <div class="cause">⚠ Major Cause: Overspeeding &amp; poor lighting</div>
+        <span class="severity high">High Severity</span>
+      </div>
+      <div class="spot-card">
+        <div class="pin">📍</div>
+        <div class="location-name">Silk Board Junction</div>
+        <div class="cause">⚠ Major Cause: Congestion &amp; signal violation</div>
+        <span class="severity high">High Severity</span>
+      </div>
+      <div class="spot-card">
+        <div class="pin">📍</div>
+        <div class="location-name">Majestic Underpass</div>
+        <div class="cause">⚠ Major Cause: Wrong-way driving</div>
+        <span class="severity medium">Medium Severity</span>
+      </div>
+      <div class="spot-card">
+        <div class="pin">📍</div>
+        <div class="location-name">Peenya Industrial Area</div>
+        <div class="cause">⚠ Major Cause: Heavy vehicle collisions</div>
+        <span class="severity high">High Severity</span>
+      </div>
+      <div class="spot-card">
+        <div class="pin">📍</div>
+        <div class="location-name">Hebbal Flyover</div>
+        <div class="cause">⚠ Major Cause: Rain &amp; slippery surface</div>
+        <span class="severity medium">Medium Severity</span>
+      </div>
+      <div class="spot-card">
+        <div class="pin">📍</div>
+        <div class="location-name">NICE Road Stretch</div>
+        <div class="cause">⚠ Major Cause: Drunk driving at night</div>
+        <span class="severity low">Low Severity</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA TABLE -->
+<section id="data">
+  <div class="fade-in">
+    <div class="section-label">Statistics</div>
+    <h2>Accident Data Table</h2>
+    <div class="divider"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Location</th>
+            <th>No. of Accidents</th>
+            <th>Major Cause</th>
+            <th>Severity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>01</td>
+            <td>NH-44 Ambala Bypass</td>
+            <td>142</td>
+            <td>Overspeeding</td>
+            <td><span class="severity high">High</span></td>
+          </tr>
+          <tr>
+            <td>02</td>
+            <td>Silk Board Junction</td>
+            <td>128</td>
+            <td>Signal Violation</td>
+            <td><span class="severity high">High</span></td>
+          </tr>
+          <tr>
+            <td>03</td>
+            <td>Majestic Underpass</td>
+            <td>87</td>
+            <td>Wrong-Way Driving</td>
+            <td><span class="severity medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>04</td>
+            <td>Peenya Industrial Area</td>
+            <td>115</td>
+            <td>Heavy Vehicle Collision</td>
+            <td><span class="severity high">High</span></td>
+          </tr>
+          <tr>
+            <td>05</td>
+            <td>Hebbal Flyover</td>
+            <td>63</td>
+            <td>Slippery Surface</td>
+            <td><span class="severity medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>06</td>
+            <td>NICE Road Stretch</td>
+            <td>44</td>
+            <td>Drunk Driving</td>
+            <td><span class="severity low">Low</span></td>
+          </tr>
+          <tr>
+            <td>07</td>
+            <td>KR Puram Bridge</td>
+            <td>76</td>
+            <td>Reckless Overtaking</td>
+            <td><span class="severity medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>08</td>
+            <td>Electronic City Phase 2</td>
+            <td>51</td>
+            <td>Poor Road Markings</td>
+            <td><span class="severity low">Low</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SAFETY TIPS -->
+<section id="safety">
+  <div class="fade-in">
+    <div class="section-label">Awareness</div>
+    <h2>Road Safety Tips</h2>
+    <div class="divider"></div>
+    <div class="tips-card">
+      <div class="tip-item">
+        <div class="tip-icon">🚗</div>
+        <div class="tip-text">Always wear your seatbelt — both front and rear passengers must buckle up before the vehicle moves.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">📵</div>
+        <div class="tip-text">Never use a mobile phone while driving. Even hands-free calls can distract your attention from the road.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">🚦</div>
+        <div class="tip-text">Obey all traffic signals and road signs. Red lights and stop signs are non-negotiable safety rules.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">🍺</div>
+        <div class="tip-text">Never drive under the influence of alcohol or drugs. Arrange a designated driver or use public transport.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">⏱</div>
+        <div class="tip-text">Maintain safe following distance. The 3-second rule helps ensure adequate reaction time in emergencies.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">🌧</div>
+        <div class="tip-text">Slow down in poor weather. Rain, fog, and wet roads drastically reduce tyre grip and visibility.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">🌙</div>
+        <div class="tip-text">Use headlights appropriately at night and in low-visibility conditions. Always switch to low-beam in oncoming traffic.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">🏍</div>
+        <div class="tip-text">Two-wheeler riders must wear ISI-certified helmets at all times and ensure passengers do the same.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REPORT -->
+<section id="report">
+  <div class="fade-in">
+    <div class="section-label">Community</div>
+    <h2>Report a Black Spot</h2>
+    <div class="divider"></div>
+    <div class="form-card">
+      <div class="form-note">
+        <span>ℹ</span> UI Demonstration Only — No data is submitted or stored
+      </div>
+      <form onsubmit="handleSubmit(event)">
+        <label for="loc">Location Name</label>
+        <input type="text" id="loc" placeholder="e.g. MG Road near Signal No. 3" />
+
+        <label for="desc">Problem Description</label>
+        <textarea id="desc" placeholder="Describe the hazard, frequency of incidents, time of day, etc."></textarea>
+
+        <button type="submit">Submit Report</button>
+      </form>
+      <div id="success-msg" style="display:none; margin-top:20px; padding:14px 18px; background:rgba(39,174,96,0.1); border:1px solid rgba(39,174,96,0.3); border-radius:4px; color:#2ecc71; font-size:14px;">
+        ✔ Report submitted successfully! (UI demo — no data stored)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <span>Accident Black Spot Portal</span> — Road Safety Awareness Project</p>
+  <p style="margin-top:6px; font-size:12px;">Developed for educational purposes &nbsp;|&nbsp; Front-End Demonstration</p>
+</footer>
+
+<script>
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Form submit demo
+  function handleSubmit(e) {
+    e.preventDefault();
+    const loc  = document.getElementById('loc').value.trim();
+    const desc = document.getElementById('desc').value.trim();
+    if (!loc || !desc) {
+      alert('Please fill in both fields before submitting.');
+      return;
+    }
+    document.getElementById('loc').value  = '';
+    document.getElementById('desc').value = '';
+    const msg = document.getElementById('success-msg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 4000);
+  }
+
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks  = document.querySelectorAll('nav a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current
+        ? '#fff' : '';
+    });
+  });
+</script>
+</body>
+</html>
