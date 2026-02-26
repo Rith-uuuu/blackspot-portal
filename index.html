@@ -1,475 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Accident Black Spot Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <title>Chennai Accident Black Spot Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     :root {
       --red: #c0392b;
       --red-dark: #922b21;
       --red-light: #e74c3c;
       --black: #0d0d0d;
-      --dark: #1a1a1a;
-      --mid: #2c2c2c;
-      --white: #f5f5f0;
-      --grey: #888;
-      --card-bg: #1f1f1f;
+      --dark: #141414;
+      --card: #1a1a1a;
+      --card2: #222;
+      --border: rgba(255,255,255,0.08);
+      --white: #f0ede8;
+      --grey: #666;
+      --green: #27ae60;
+      --orange: #e67e22;
+      --yellow: #f39c12;
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--black);
-      color: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      line-height: 1.7;
-    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;overflow-x:hidden;}
 
     /* ── HEADER ── */
-    header {
-      background: var(--red-dark);
-      background-image: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 18px,
-        rgba(0,0,0,0.08) 18px,
-        rgba(0,0,0,0.08) 36px
-      );
-      padding: 60px 40px 50px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      border-bottom: 4px solid var(--red-light);
+    header{
+      background:var(--red-dark);
+      background-image:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(0,0,0,0.07) 20px,rgba(0,0,0,0.07) 40px);
+      padding:64px 40px 52px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+      border-bottom:4px solid var(--red-light);
     }
-
-    header::before {
-      content: '⚠';
-      position: absolute;
-      font-size: 320px;
-      opacity: 0.04;
-      left: -40px;
-      top: -60px;
-      pointer-events: none;
-      line-height: 1;
-    }
-
-    header h1 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(42px, 8vw, 88px);
-      letter-spacing: 3px;
-      color: #fff;
-      text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      animation: fadeDown 0.8s ease both;
-    }
-
-    header p {
-      margin-top: 10px;
-      font-size: 15px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.75);
-      animation: fadeDown 0.8s 0.2s ease both;
-    }
-
-    .header-badge {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 6px 18px;
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 2px;
-      font-size: 12px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-      animation: fadeDown 0.8s 0.4s ease both;
-    }
+    header::before{content:'⚠';position:absolute;font-size:380px;opacity:0.03;left:-60px;top:-80px;pointer-events:none;line-height:1;}
+    header::after{content:'⚠';position:absolute;font-size:200px;opacity:0.03;right:-20px;bottom:-60px;pointer-events:none;line-height:1;}
+    .header-top{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:8px;}
+    .live-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);}
+    .live-dot{width:7px;height:7px;border-radius:50%;background:#e74c3c;animation:pulse 1.5s infinite;}
+    header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,8vw,90px);letter-spacing:3px;color:#fff;text-shadow:0 4px 24px rgba(0,0,0,0.6);animation:fadeDown 0.8s ease both;}
+    header .sub{margin-top:8px;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.65);animation:fadeDown 0.8s 0.15s ease both;}
+    .header-stats{display:flex;justify-content:center;gap:32px;margin-top:28px;animation:fadeDown 0.8s 0.3s ease both;}
+    .hstat{text-align:center;}
+    .hstat .n{font-family:'Bebas Neue',sans-serif;font-size:34px;color:#fff;line-height:1;}
+    .hstat .l{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-top:2px;}
 
     /* ── NAV ── */
-    nav {
-      background: var(--dark);
-      border-bottom: 2px solid var(--red);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    }
+    nav{background:var(--dark);border-bottom:2px solid var(--red);position:sticky;top:0;z-index:200;display:flex;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,0.6);}
+    nav a{color:rgba(255,255,255,0.55);text-decoration:none;padding:15px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;transition:all 0.2s;border-right:1px solid var(--border);position:relative;}
+    nav a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--red-light);transition:width 0.25s;}
+    nav a:hover{color:#fff;background:rgba(255,255,255,0.03);}
+    nav a:hover::after{width:100%;}
+    nav a.active{color:#fff;}
+    nav a.active::after{width:100%;}
 
-    nav a {
-      color: rgba(255,255,255,0.65);
-      text-decoration: none;
-      padding: 16px 28px;
-      font-size: 12px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      font-weight: 600;
-      transition: all 0.2s;
-      border-right: 1px solid rgba(255,255,255,0.06);
-      position: relative;
-    }
+    /* ── SECTION WRAPPER ── */
+    .sec{max-width:1140px;margin:0 auto;padding:80px 28px;}
+    .sec-sep{border-top:1px solid var(--border);}
+    .sec-label{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--red-light);margin-bottom:8px;font-weight:600;}
+    h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(30px,4.5vw,50px);letter-spacing:2px;color:#fff;line-height:1;margin-bottom:28px;}
+    .divider{width:46px;height:3px;background:var(--red);margin-bottom:28px;}
 
-    nav a::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 0; height: 2px;
-      background: var(--red-light);
-      transition: width 0.25s;
-    }
-
-    nav a:hover { color: #fff; background: rgba(255,255,255,0.04); }
-    nav a:hover::after { width: 100%; }
-
-    /* ── SECTIONS ── */
-    section {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 80px 30px;
-    }
-
-    .section-label {
-      font-size: 11px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--red-light);
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-
-    h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(32px, 5vw, 52px);
-      letter-spacing: 2px;
-      color: #fff;
-      margin-bottom: 30px;
-      line-height: 1;
-    }
-
-    .divider {
-      width: 50px; height: 3px;
-      background: var(--red);
-      margin-bottom: 30px;
-    }
+    /* ── FADE IN ── */
+    .fi{opacity:0;transform:translateY(28px);transition:opacity 0.65s ease,transform 0.65s ease;}
+    .fi.vis{opacity:1;transform:translateY(0);}
 
     /* ── ABOUT ── */
-    #about {
-      border-top: 1px solid rgba(255,255,255,0.07);
-    }
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+    .about-text{background:var(--card);border-left:4px solid var(--red);border-radius:4px;padding:32px 36px;box-shadow:0 8px 40px rgba(0,0,0,0.35);}
+    .about-text p{color:rgba(255,255,255,0.72);margin-bottom:14px;}
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .stat-box{background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.22);border-radius:4px;padding:20px;text-align:center;}
+    .stat-box .n{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--red-light);line-height:1;}
+    .stat-box .l{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-top:4px;}
 
-    .about-card {
-      background: var(--card-bg);
-      border-left: 4px solid var(--red);
-      border-radius: 4px;
-      padding: 36px 40px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 36px;
-    }
-
-    .about-card p { color: rgba(255,255,255,0.75); }
-
-    .about-stat {
-      background: rgba(192,57,43,0.1);
-      border: 1px solid rgba(192,57,43,0.25);
-      border-radius: 4px;
-      padding: 20px 24px;
-      text-align: center;
-    }
-
-    .about-stat .num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 52px;
-      color: var(--red-light);
-      line-height: 1;
-    }
-
-    .about-stat .lbl {
-      font-size: 12px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--grey);
-      margin-top: 4px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+    /* ── MAP ── */
+    #map-container{border-radius:8px;overflow:hidden;box-shadow:0 8px 50px rgba(0,0,0,0.5);border:1px solid var(--border);}
+    #map{height:480px;width:100%;}
+    .map-legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;padding:14px 18px;background:var(--card);border-radius:4px;border:1px solid var(--border);}
+    .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.6);}
+    .legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
 
     /* ── BLACK SPOT CARDS ── */
-    #blackspots { border-top: 1px solid rgba(255,255,255,0.07); }
+    .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;}
+    .spot-card{background:var(--card);border-radius:6px;border-top:3px solid var(--red);padding:26px 24px;box-shadow:0 6px 30px rgba(0,0,0,0.3);transition:transform 0.25s,box-shadow 0.25s;position:relative;overflow:hidden;cursor:default;}
+    .spot-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(192,57,43,0.05),transparent);pointer-events:none;}
+    .spot-card:hover{transform:translateY(-5px);box-shadow:0 18px 55px rgba(0,0,0,0.5);}
+    .spot-card .loc{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:#fff;margin-bottom:10px;}
+    .spot-card .cause{font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.4;}
+    .spot-card .acc{font-size:12px;color:var(--grey);margin-bottom:12px;}
+    .spot-card .acc span{color:var(--red-light);font-weight:600;}
+    .pin-icon{position:absolute;top:14px;right:16px;font-size:20px;opacity:0.3;}
 
-    .cards-flex {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .spot-card {
-      background: var(--card-bg);
-      border-radius: 6px;
-      border-top: 3px solid var(--red);
-      padding: 28px 26px;
-      flex: 1 1 220px;
-      box-shadow: 0 6px 30px rgba(0,0,0,0.35);
-      transition: transform 0.25s, box-shadow 0.25s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .spot-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, rgba(192,57,43,0.06), transparent);
-      pointer-events: none;
-    }
-
-    .spot-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 16px 50px rgba(0,0,0,0.5);
-    }
-
-    .spot-card .location-name {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      letter-spacing: 1px;
-      color: #fff;
-      margin-bottom: 12px;
-    }
-
-    .spot-card .cause {
-      font-size: 13px;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 14px;
-    }
-
-    .severity {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 2px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .severity.high   { background: rgba(231,76,60,0.2);  color: #e74c3c; border: 1px solid rgba(231,76,60,0.4); }
-    .severity.medium { background: rgba(230,126,34,0.2); color: #e67e22; border: 1px solid rgba(230,126,34,0.4); }
-    .severity.low    { background: rgba(241,196,15,0.2); color: #f1c40f; border: 1px solid rgba(241,196,15,0.4); }
-
-    .spot-card .pin {
-      position: absolute;
-      top: 16px; right: 18px;
-      font-size: 22px;
-      opacity: 0.35;
-    }
+    .sev{display:inline-block;padding:3px 11px;border-radius:2px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+    .sev.high{background:rgba(231,76,60,0.15);color:#e74c3c;border:1px solid rgba(231,76,60,0.35);}
+    .sev.medium{background:rgba(230,126,34,0.15);color:#e67e22;border:1px solid rgba(230,126,34,0.35);}
+    .sev.low{background:rgba(243,156,18,0.15);color:#f39c12;border:1px solid rgba(243,156,18,0.35);}
 
     /* ── TABLE ── */
-    #data { border-top: 1px solid rgba(255,255,255,0.07); }
-
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 6px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--card-bg);
-    }
-
-    thead tr {
-      background: var(--red-dark);
-    }
-
-    thead th {
-      padding: 16px 20px;
-      text-align: left;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.85);
-      font-weight: 600;
-      border-bottom: 2px solid var(--red-light);
-    }
-
-    tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      transition: background 0.15s;
-    }
-
-    tbody tr:nth-child(even) { background: rgba(255,255,255,0.025); }
-    tbody tr:hover { background: rgba(192,57,43,0.1); cursor: default; }
-
-    tbody td {
-      padding: 14px 20px;
-      color: rgba(255,255,255,0.75);
-      font-size: 14px;
-    }
-
-    tbody td:first-child {
-      color: var(--grey);
-      font-size: 12px;
-      font-weight: 600;
-    }
+    .table-controls{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+    .search-box{flex:1;min-width:200px;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:10px 16px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;}
+    .search-box:focus{border-color:var(--red-light);}
+    .search-box::placeholder{color:var(--grey);}
+    .filter-select{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:10px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;transition:border-color 0.2s;}
+    .filter-select:focus{border-color:var(--red-light);}
+    .filter-select option{background:#1a1a1a;}
+    .table-wrap{overflow-x:auto;border-radius:6px;box-shadow:0 8px 40px rgba(0,0,0,0.4);}
+    table{width:100%;border-collapse:collapse;background:var(--card);}
+    thead tr{background:var(--red-dark);}
+    thead th{padding:14px 18px;text-align:left;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.8);font-weight:600;border-bottom:2px solid var(--red-light);}
+    tbody tr{border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.15s;}
+    tbody tr:nth-child(even){background:rgba(255,255,255,0.02);}
+    tbody tr:hover{background:rgba(192,57,43,0.09);}
+    tbody td{padding:13px 18px;color:rgba(255,255,255,0.72);font-size:13px;}
+    tbody td:first-child{color:var(--grey);font-size:11px;font-weight:600;}
+    .no-results{text-align:center;padding:40px;color:var(--grey);font-size:14px;}
 
     /* ── TIPS ── */
-    #safety { border-top: 1px solid rgba(255,255,255,0.07); }
-
-    .tips-card {
-      background: var(--card-bg);
-      border-radius: 6px;
-      padding: 40px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .tip-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 14px 16px;
-      border-radius: 4px;
-      transition: background 0.2s;
-    }
-
-    .tip-item:hover { background: rgba(255,255,255,0.04); }
-
-    .tip-icon {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: rgba(192,57,43,0.15);
-      border: 1px solid rgba(192,57,43,0.3);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .tip-text { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.5; }
+    .tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .tip{display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:4px;background:var(--card);border:1px solid var(--border);transition:border-color 0.2s,background 0.2s;}
+    .tip:hover{background:var(--card2);border-color:rgba(192,57,43,0.3);}
+    .tip-icon{width:38px;height:38px;border-radius:50%;background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.28);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+    .tip-text{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;}
 
     /* ── REPORT FORM ── */
-    #report { border-top: 1px solid rgba(255,255,255,0.07); }
+    .report-layout{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
+    .form-card{background:var(--card);border-left:4px solid var(--red);border-radius:6px;padding:36px 38px;box-shadow:0 8px 40px rgba(0,0,0,0.35);}
+    .form-note{display:inline-flex;align-items:center;gap:8px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:3px;padding:7px 13px;font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:1px;margin-bottom:24px;}
+    label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:7px;font-weight:600;}
+    input[type="text"],input[type="email"],select.form-select,textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:12px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color 0.2s,background 0.2s;outline:none;margin-bottom:18px;}
+    input[type="text"]:focus,input[type="email"]:focus,select.form-select:focus,textarea:focus{border-color:var(--red-light);background:rgba(192,57,43,0.05);}
+    select.form-select option{background:#1a1a1a;}
+    textarea{resize:vertical;min-height:100px;}
+    .submit-btn{background:var(--red);color:#fff;border:none;padding:13px 32px;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;border-radius:4px;cursor:pointer;transition:background 0.2s,transform 0.15s;width:100%;}
+    .submit-btn:hover{background:var(--red-light);transform:translateY(-2px);}
+    .submit-btn:active{transform:translateY(0);}
+    .success-msg{display:none;margin-top:14px;padding:12px 16px;background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);border-radius:4px;color:#2ecc71;font-size:13px;}
 
-    .form-card {
-      background: var(--card-bg);
-      border-radius: 6px;
-      border-left: 4px solid var(--red);
-      padding: 44px 48px;
-      max-width: 600px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-    }
-
-    .form-note {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(231,76,60,0.1);
-      border: 1px solid rgba(231,76,60,0.2);
-      border-radius: 3px;
-      padding: 8px 14px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.55);
-      letter-spacing: 1px;
-      margin-bottom: 28px;
-    }
-
-    label {
-      display: block;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-
-    input[type="text"], textarea {
-      width: 100%;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 4px;
-      padding: 14px 16px;
-      color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      transition: border-color 0.2s, background 0.2s;
-      outline: none;
-      margin-bottom: 24px;
-    }
-
-    input[type="text"]:focus, textarea:focus {
-      border-color: var(--red-light);
-      background: rgba(192,57,43,0.06);
-    }
-
-    textarea { resize: vertical; min-height: 110px; }
-
-    button[type="submit"] {
-      background: var(--red);
-      color: #fff;
-      border: none;
-      padding: 14px 36px;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 18px;
-      letter-spacing: 2px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-    }
-
-    button[type="submit"]:hover { background: var(--red-light); transform: translateY(-2px); }
-    button[type="submit"]:active { transform: translateY(0); }
+    /* ── REPORTS LIST ── */
+    .reports-panel{background:var(--card);border-radius:6px;border:1px solid var(--border);padding:24px;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
+    .reports-panel h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+    .report-count{background:var(--red);color:#fff;border-radius:12px;padding:2px 10px;font-size:13px;font-family:'DM Sans',sans-serif;letter-spacing:0;}
+    .report-item{background:var(--card2);border-radius:4px;border-left:3px solid var(--red);padding:14px 16px;margin-bottom:10px;animation:slideIn 0.4s ease;}
+    .report-item .r-loc{font-weight:600;color:#fff;font-size:14px;margin-bottom:4px;}
+    .report-item .r-desc{font-size:12px;color:rgba(255,255,255,0.55);line-height:1.4;margin-bottom:6px;}
+    .report-item .r-meta{font-size:11px;color:var(--grey);display:flex;gap:12px;}
+    .report-item .r-sev{font-size:10px;letter-spacing:1px;text-transform:uppercase;}
+    .empty-reports{text-align:center;padding:32px;color:var(--grey);font-size:13px;}
 
     /* ── FOOTER ── */
-    footer {
-      background: #0a0a0a;
-      border-top: 2px solid var(--red-dark);
-      padding: 36px 40px;
-      text-align: center;
-      color: rgba(255,255,255,0.35);
-      font-size: 13px;
-      letter-spacing: 1px;
-    }
-
-    footer span { color: var(--red-light); }
+    footer{background:#080808;border-top:2px solid var(--red-dark);padding:32px 40px;text-align:center;color:rgba(255,255,255,0.28);font-size:12px;letter-spacing:1px;}
+    footer span{color:var(--red-light);}
 
     /* ── ANIMATIONS ── */
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .fade-in {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-    .fade-in.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-18px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.85);}}
+    @keyframes slideIn{from{opacity:0;transform:translateX(-12px);}to{opacity:1;transform:translateX(0);}}
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 700px) {
-      nav { flex-wrap: wrap; }
-      nav a { padding: 12px 16px; font-size: 11px; }
-      .about-card, .tips-card { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .form-card { padding: 28px 22px; }
-      section { padding: 50px 18px; }
+    @media(max-width:768px){
+      nav{flex-wrap:wrap;}
+      nav a{padding:11px 14px;font-size:10px;}
+      .about-grid,.report-layout,.tips-grid{grid-template-columns:1fr;}
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .header-stats{gap:18px;}
+      .sec{padding:50px 16px;}
+      .form-card{padding:24px 20px;}
     }
   </style>
 </head>
@@ -477,14 +176,22 @@
 
 <!-- HEADER -->
 <header>
-  <div class="header-badge">Road Safety Initiative</div>
+  <div class="header-top">
+    <div class="live-badge"><span class="live-dot"></span>Chennai Region</div>
+  </div>
   <h1>Accident Black Spot Portal</h1>
-  <p>Identifying &amp; Eliminating Dangerous Road Zones Across the Region</p>
+  <p class="sub">Real-Time Monitoring of Dangerous Road Zones — Chennai, Tamil Nadu</p>
+  <div class="header-stats">
+    <div class="hstat"><div class="n" id="total-spots">18</div><div class="l">Black Spots</div></div>
+    <div class="hstat"><div class="n" id="total-acc">1,240+</div><div class="l">Recorded Accidents</div></div>
+    <div class="hstat"><div class="n" id="total-reports">0</div><div class="l">User Reports</div></div>
+  </div>
 </header>
 
 <!-- NAV -->
 <nav>
   <a href="#about">About</a>
+  <a href="#map">Map</a>
   <a href="#blackspots">Black Spots</a>
   <a href="#data">Data</a>
   <a href="#safety">Safety Tips</a>
@@ -492,230 +199,152 @@
 </nav>
 
 <!-- ABOUT -->
-<section id="about">
-  <div class="fade-in">
-    <div class="section-label">Overview</div>
+<section id="about" class="sec sec-sep">
+  <div class="fi">
+    <div class="sec-label">Overview</div>
     <h2>What Is an Accident Black Spot?</h2>
     <div class="divider"></div>
-    <div class="about-card">
-      <div>
-        <p>An <strong>accident black spot</strong> is a specific location on a road or highway where a disproportionately high number of traffic accidents occur compared to similar road sections. These zones are considered extremely dangerous due to recurring patterns of collision, injury, and fatality.</p>
-        <br/>
-        <p>Black spots are identified through careful analysis of historical accident data, road geometry, traffic volume, and environmental factors. Understanding these zones allows authorities and planners to implement targeted safety measures to save lives.</p>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>An <strong>accident black spot</strong> is a location on a road where a disproportionately high number of traffic accidents occur. Chennai, one of India's largest metro cities, has several such zones identified by the Tamil Nadu police and traffic authorities.</p>
+        <p>These spots are typically characterized by poor road design, inadequate signage, heavy traffic volume, or dangerous driver behavior. Regular monitoring and public awareness are critical tools in reducing fatalities at these locations.</p>
+        <p>This portal presents known black spots across Chennai with data sourced from traffic authority records, allowing citizens to stay informed and submit new hazard reports.</p>
       </div>
       <div class="stats-grid">
-        <div class="about-stat">
-          <div class="num">38%</div>
-          <div class="lbl">of fatalities at known spots</div>
-        </div>
-        <div class="about-stat">
-          <div class="num">5+</div>
-          <div class="lbl">accidents define a black spot</div>
-        </div>
-        <div class="about-stat">
-          <div class="num">70%</div>
-          <div class="lbl">preventable with intervention</div>
-        </div>
-        <div class="about-stat">
-          <div class="num">3x</div>
-          <div class="lbl">higher risk than average roads</div>
-        </div>
+        <div class="stat-box"><div class="n">42%</div><div class="l">of city fatalities at known spots</div></div>
+        <div class="stat-box"><div class="n">5+</div><div class="l">accidents define a black spot</div></div>
+        <div class="stat-box"><div class="n">70%</div><div class="l">preventable with intervention</div></div>
+        <div class="stat-box"><div class="n">3×</div><div class="l">higher risk than avg roads</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- BLACK SPOTS -->
-<section id="blackspots">
-  <div class="fade-in">
-    <div class="section-label">Locations</div>
+<!-- MAP -->
+<section id="map" class="sec sec-sep">
+  <div class="fi">
+    <div class="sec-label">Interactive Map</div>
+    <h2>Chennai Black Spot Map</h2>
+    <div class="divider"></div>
+    <div id="map-container">
+      <div id="map"></div>
+    </div>
+    <div class="map-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div> High Severity</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div> Medium Severity</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f39c12"></div> Low Severity</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#9b59b6"></div> User Reported</div>
+    </div>
+  </div>
+</section>
+
+<!-- BLACK SPOT CARDS -->
+<section id="blackspots" class="sec sec-sep">
+  <div class="fi">
+    <div class="sec-label">Locations</div>
     <h2>Accident-Prone Black Spots</h2>
     <div class="divider"></div>
-    <div class="cards-flex">
-      <div class="spot-card">
-        <div class="pin">📍</div>
-        <div class="location-name">NH-44 Ambala Bypass</div>
-        <div class="cause">⚠ Major Cause: Overspeeding &amp; poor lighting</div>
-        <span class="severity high">High Severity</span>
-      </div>
-      <div class="spot-card">
-        <div class="pin">📍</div>
-        <div class="location-name">Silk Board Junction</div>
-        <div class="cause">⚠ Major Cause: Congestion &amp; signal violation</div>
-        <span class="severity high">High Severity</span>
-      </div>
-      <div class="spot-card">
-        <div class="pin">📍</div>
-        <div class="location-name">Majestic Underpass</div>
-        <div class="cause">⚠ Major Cause: Wrong-way driving</div>
-        <span class="severity medium">Medium Severity</span>
-      </div>
-      <div class="spot-card">
-        <div class="pin">📍</div>
-        <div class="location-name">Peenya Industrial Area</div>
-        <div class="cause">⚠ Major Cause: Heavy vehicle collisions</div>
-        <span class="severity high">High Severity</span>
-      </div>
-      <div class="spot-card">
-        <div class="pin">📍</div>
-        <div class="location-name">Hebbal Flyover</div>
-        <div class="cause">⚠ Major Cause: Rain &amp; slippery surface</div>
-        <span class="severity medium">Medium Severity</span>
-      </div>
-      <div class="spot-card">
-        <div class="pin">📍</div>
-        <div class="location-name">NICE Road Stretch</div>
-        <div class="cause">⚠ Major Cause: Drunk driving at night</div>
-        <span class="severity low">Low Severity</span>
-      </div>
-    </div>
+    <div class="cards-grid" id="cards-container"></div>
   </div>
 </section>
 
 <!-- DATA TABLE -->
-<section id="data">
-  <div class="fade-in">
-    <div class="section-label">Statistics</div>
+<section id="data" class="sec sec-sep">
+  <div class="fi">
+    <div class="sec-label">Statistics</div>
     <h2>Accident Data Table</h2>
     <div class="divider"></div>
+    <div class="table-controls">
+      <input type="text" class="search-box" id="search-input" placeholder="🔍  Search by location or cause..."/>
+      <select class="filter-select" id="sev-filter">
+        <option value="">All Severities</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+      <select class="filter-select" id="cause-filter">
+        <option value="">All Causes</option>
+      </select>
+    </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>#</th>
             <th>Location</th>
-            <th>No. of Accidents</th>
+            <th>Area</th>
+            <th>Accidents/yr</th>
             <th>Major Cause</th>
             <th>Severity</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>01</td>
-            <td>NH-44 Ambala Bypass</td>
-            <td>142</td>
-            <td>Overspeeding</td>
-            <td><span class="severity high">High</span></td>
-          </tr>
-          <tr>
-            <td>02</td>
-            <td>Silk Board Junction</td>
-            <td>128</td>
-            <td>Signal Violation</td>
-            <td><span class="severity high">High</span></td>
-          </tr>
-          <tr>
-            <td>03</td>
-            <td>Majestic Underpass</td>
-            <td>87</td>
-            <td>Wrong-Way Driving</td>
-            <td><span class="severity medium">Medium</span></td>
-          </tr>
-          <tr>
-            <td>04</td>
-            <td>Peenya Industrial Area</td>
-            <td>115</td>
-            <td>Heavy Vehicle Collision</td>
-            <td><span class="severity high">High</span></td>
-          </tr>
-          <tr>
-            <td>05</td>
-            <td>Hebbal Flyover</td>
-            <td>63</td>
-            <td>Slippery Surface</td>
-            <td><span class="severity medium">Medium</span></td>
-          </tr>
-          <tr>
-            <td>06</td>
-            <td>NICE Road Stretch</td>
-            <td>44</td>
-            <td>Drunk Driving</td>
-            <td><span class="severity low">Low</span></td>
-          </tr>
-          <tr>
-            <td>07</td>
-            <td>KR Puram Bridge</td>
-            <td>76</td>
-            <td>Reckless Overtaking</td>
-            <td><span class="severity medium">Medium</span></td>
-          </tr>
-          <tr>
-            <td>08</td>
-            <td>Electronic City Phase 2</td>
-            <td>51</td>
-            <td>Poor Road Markings</td>
-            <td><span class="severity low">Low</span></td>
-          </tr>
-        </tbody>
+        <tbody id="table-body"></tbody>
       </table>
     </div>
+    <p style="margin-top:10px;font-size:12px;color:var(--grey);" id="table-count"></p>
   </div>
 </section>
 
 <!-- SAFETY TIPS -->
-<section id="safety">
-  <div class="fade-in">
-    <div class="section-label">Awareness</div>
+<section id="safety" class="sec sec-sep">
+  <div class="fi">
+    <div class="sec-label">Awareness</div>
     <h2>Road Safety Tips</h2>
     <div class="divider"></div>
-    <div class="tips-card">
-      <div class="tip-item">
-        <div class="tip-icon">🚗</div>
-        <div class="tip-text">Always wear your seatbelt — both front and rear passengers must buckle up before the vehicle moves.</div>
-      </div>
-      <div class="tip-item">
-        <div class="tip-icon">📵</div>
-        <div class="tip-text">Never use a mobile phone while driving. Even hands-free calls can distract your attention from the road.</div>
-      </div>
-      <div class="tip-item">
-        <div class="tip-icon">🚦</div>
-        <div class="tip-text">Obey all traffic signals and road signs. Red lights and stop signs are non-negotiable safety rules.</div>
-      </div>
-      <div class="tip-item">
-        <div class="tip-icon">🍺</div>
-        <div class="tip-text">Never drive under the influence of alcohol or drugs. Arrange a designated driver or use public transport.</div>
-      </div>
-      <div class="tip-item">
-        <div class="tip-icon">⏱</div>
-        <div class="tip-text">Maintain safe following distance. The 3-second rule helps ensure adequate reaction time in emergencies.</div>
-      </div>
-      <div class="tip-item">
-        <div class="tip-icon">🌧</div>
-        <div class="tip-text">Slow down in poor weather. Rain, fog, and wet roads drastically reduce tyre grip and visibility.</div>
-      </div>
-      <div class="tip-item">
-        <div class="tip-icon">🌙</div>
-        <div class="tip-text">Use headlights appropriately at night and in low-visibility conditions. Always switch to low-beam in oncoming traffic.</div>
-      </div>
-      <div class="tip-item">
-        <div class="tip-icon">🏍</div>
-        <div class="tip-text">Two-wheeler riders must wear ISI-certified helmets at all times and ensure passengers do the same.</div>
-      </div>
+    <div class="tips-grid">
+      <div class="tip"><div class="tip-icon">🚗</div><div class="tip-text">Always wear your seatbelt. Both front and rear passengers must buckle up before the vehicle moves.</div></div>
+      <div class="tip"><div class="tip-icon">📵</div><div class="tip-text">Never use a mobile phone while driving — even hands-free calls reduce reaction time significantly.</div></div>
+      <div class="tip"><div class="tip-icon">🚦</div><div class="tip-text">Obey all traffic signals. Red lights at Chennai's busy intersections like Koyambedu are strictly enforced.</div></div>
+      <div class="tip"><div class="tip-icon">🍺</div><div class="tip-text">Never drive under the influence. Drunk driving is one of the top causes of night-time accidents on OMR and ECR.</div></div>
+      <div class="tip"><div class="tip-icon">⏱</div><div class="tip-text">Maintain safe following distance. Use the 3-second rule to ensure adequate braking time in heavy traffic.</div></div>
+      <div class="tip"><div class="tip-icon">🌧</div><div class="tip-text">Chennai's monsoon season makes roads extremely slippery. Reduce speed significantly during rains.</div></div>
+      <div class="tip"><div class="tip-icon">🌙</div><div class="tip-text">Use headlights correctly at night and switch to low beam for oncoming traffic on Chennai's highways.</div></div>
+      <div class="tip"><div class="tip-icon">🏍</div><div class="tip-text">Two-wheeler riders must wear ISI-certified helmets. Chennai sees a disproportionate share of two-wheeler fatalities.</div></div>
+      <div class="tip"><div class="tip-icon">🚛</div><div class="tip-text">Be cautious around heavy vehicles, especially on GST Road and NH-48 where trucks frequently change lanes.</div></div>
+      <div class="tip"><div class="tip-icon">🗺</div><div class="tip-text">Be extra cautious at identified black spots. Reduce speed and stay alert when passing known accident zones.</div></div>
     </div>
   </div>
 </section>
 
 <!-- REPORT -->
-<section id="report">
-  <div class="fade-in">
-    <div class="section-label">Community</div>
+<section id="report" class="sec sec-sep">
+  <div class="fi">
+    <div class="sec-label">Community</div>
     <h2>Report a Black Spot</h2>
     <div class="divider"></div>
-    <div class="form-card">
-      <div class="form-note">
-        <span>ℹ</span> UI Demonstration Only — No data is submitted or stored
+    <div class="report-layout">
+      <div class="form-card">
+        <div class="form-note"><span>ℹ</span> Reports are stored in this session only — no data is sent to a server</div>
+        <form id="report-form" onsubmit="submitReport(event)">
+          <label for="r-loc">Location Name *</label>
+          <input type="text" id="r-loc" placeholder="e.g. Anna Salai near Gemini Flyover"/>
+
+          <label for="r-area">Area / Zone</label>
+          <input type="text" id="r-area" placeholder="e.g. Nungambakkam"/>
+
+          <label for="r-cause">Main Cause</label>
+          <input type="text" id="r-cause" placeholder="e.g. Poor road markings, Overspeeding"/>
+
+          <label for="r-sev">Severity Level</label>
+          <select class="form-select" id="r-sev">
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+
+          <label for="r-desc">Description *</label>
+          <textarea id="r-desc" placeholder="Describe the hazard — frequency, time of day, road conditions, etc."></textarea>
+
+          <button type="submit" class="submit-btn">Submit Report</button>
+        </form>
+        <div class="success-msg" id="success-msg">✔ Report submitted! It is now visible in the community reports panel.</div>
       </div>
-      <form onsubmit="handleSubmit(event)">
-        <label for="loc">Location Name</label>
-        <input type="text" id="loc" placeholder="e.g. MG Road near Signal No. 3" />
 
-        <label for="desc">Problem Description</label>
-        <textarea id="desc" placeholder="Describe the hazard, frequency of incidents, time of day, etc."></textarea>
-
-        <button type="submit">Submit Report</button>
-      </form>
-      <div id="success-msg" style="display:none; margin-top:20px; padding:14px 18px; background:rgba(39,174,96,0.1); border:1px solid rgba(39,174,96,0.3); border-radius:4px; color:#2ecc71; font-size:14px;">
-        ✔ Report submitted successfully! (UI demo — no data stored)
+      <div class="reports-panel">
+        <h3>Community Reports <span class="report-count" id="report-count">0</span></h3>
+        <div id="reports-list">
+          <div class="empty-reports">No reports yet. Be the first to report a black spot!</div>
+        </div>
       </div>
     </div>
   </div>
@@ -723,53 +352,223 @@
 
 <!-- FOOTER -->
 <footer>
-  <p>© 2025 <span>Accident Black Spot Portal</span> — Road Safety Awareness Project</p>
-  <p style="margin-top:6px; font-size:12px;">Developed for educational purposes &nbsp;|&nbsp; Front-End Demonstration</p>
+  <p>© 2025 <span>Chennai Accident Black Spot Portal</span> — Road Safety Awareness Project</p>
+  <p style="margin-top:6px;">Data sourced from Tamil Nadu Traffic Police records &nbsp;|&nbsp; Front-End Demonstration</p>
 </footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  // Scroll fade-in
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1 });
+// ── DATA ──
+const blackSpots = [
+  { id:1,  name:"Koyambedu Junction",         area:"Koyambedu",      lat:13.0694, lng:80.1948, accidents:142, cause:"Signal violation & overcrowding", severity:"high"   },
+  { id:2,  name:"Kathipara Flyover Base",      area:"Guindy",         lat:13.0067, lng:80.2206, accidents:128, cause:"Reckless lane changing",          severity:"high"   },
+  { id:3,  name:"OMR Sholinganallur",          area:"Sholinganallur",  lat:12.9010, lng:80.2279, accidents:115, cause:"Overspeeding at night",           severity:"high"   },
+  { id:4,  name:"ECR Thiruvanmiyur",           area:"Thiruvanmiyur",   lat:12.9837, lng:80.2685, accidents:107, cause:"Drunk driving & speeding",        severity:"high"   },
+  { id:5,  name:"Poonamallee High Road",       area:"Poonamallee",     lat:13.0477, lng:80.0785, accidents:98,  cause:"Heavy vehicle collision",         severity:"high"   },
+  { id:6,  name:"GST Road Vandalur",           area:"Vandalur",        lat:12.8926, lng:80.0770, accidents:93,  cause:"Truck overtaking accidents",      severity:"high"   },
+  { id:7,  name:"Mount Road (Anna Salai)",     area:"Teynampet",       lat:13.0418, lng:80.2532, accidents:87,  cause:"Pedestrian & vehicle conflict",   severity:"medium" },
+  { id:8,  name:"Arcot Road Vadapalani",       area:"Vadapalani",      lat:13.0530, lng:80.2105, accidents:82,  cause:"Illegal U-turns & wrong way",     severity:"medium" },
+  { id:9,  name:"Velachery Main Road",         area:"Velachery",       lat:12.9787, lng:80.2207, accidents:76,  cause:"Waterlogging & poor visibility",  severity:"medium" },
+  { id:10, name:"Taramani Link Road",          area:"Taramani",        lat:12.9867, lng:80.2415, accidents:71,  cause:"Overspeeding",                    severity:"medium" },
+  { id:11, name:"Madhavaram Bypass",           area:"Madhavaram",      lat:13.1448, lng:80.2355, accidents:68,  cause:"Heavy vehicles at blind curves",  severity:"medium" },
+  { id:12, name:"Ambattur Industrial Estate",  area:"Ambattur",        lat:13.1121, lng:80.1655, accidents:64,  cause:"Poor road markings",              severity:"medium" },
+  { id:13, name:"Perungudi Toll Plaza Area",   area:"Perungudi",       lat:12.9601, lng:80.2368, accidents:58,  cause:"Sudden braking & rear collisions",severity:"medium" },
+  { id:14, name:"Red Hills Road",              area:"Red Hills",       lat:13.1876, lng:80.1770, accidents:52,  cause:"Cattle on road & poor lighting",  severity:"medium" },
+  { id:15, name:"Nungambakkam High Road",      area:"Nungambakkam",    lat:13.0569, lng:80.2425, accidents:47,  cause:"Signal jumping & pedestrians",    severity:"low"    },
+  { id:16, name:"Adyar Bridge",               area:"Adyar",           lat:13.0055, lng:80.2567, accidents:44,  cause:"Monsoon flooding & slippery",     severity:"low"    },
+  { id:17, name:"Anna Nagar 2nd Avenue",       area:"Anna Nagar",      lat:13.0850, lng:80.2101, accidents:38,  cause:"Rash driving by two-wheelers",    severity:"low"    },
+  { id:18, name:"Tambaram Bypass Junction",    area:"Tambaram",        lat:12.9249, lng:80.1000, accidents:35,  cause:"Drunk driving at night",          severity:"low"    },
+];
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+let userReports = [];
 
-  // Form submit demo
-  function handleSubmit(e) {
-    e.preventDefault();
-    const loc  = document.getElementById('loc').value.trim();
-    const desc = document.getElementById('desc').value.trim();
-    if (!loc || !desc) {
-      alert('Please fill in both fields before submitting.');
-      return;
-    }
-    document.getElementById('loc').value  = '';
-    document.getElementById('desc').value = '';
-    const msg = document.getElementById('success-msg');
-    msg.style.display = 'block';
-    setTimeout(() => msg.style.display = 'none', 4000);
+// ── SEVERITY COLOR ──
+function sevColor(s){ return s==='high'?'#e74c3c':s==='medium'?'#e67e22':'#f39c12'; }
+
+// ── RENDER CARDS ──
+function renderCards(){
+  const c = document.getElementById('cards-container');
+  c.innerHTML = blackSpots.map(s=>`
+    <div class="spot-card">
+      <div class="pin-icon">📍</div>
+      <div class="loc">${s.name}</div>
+      <div class="cause">⚠ ${s.cause}</div>
+      <div class="acc">Accidents/yr: <span>${s.accidents}</span></div>
+      <span class="sev ${s.severity}">${s.severity} severity</span>
+    </div>
+  `).join('');
+}
+
+// ── RENDER TABLE ──
+function renderTable(data){
+  const tbody = document.getElementById('table-body');
+  if(data.length===0){
+    tbody.innerHTML=`<tr><td colspan="6" class="no-results">No results found. Try adjusting your search or filters.</td></tr>`;
+    document.getElementById('table-count').textContent='';
+    return;
   }
+  tbody.innerHTML = data.map((s,i)=>`
+    <tr>
+      <td>${String(i+1).padStart(2,'0')}</td>
+      <td>${s.name}</td>
+      <td>${s.area}</td>
+      <td>${s.accidents}</td>
+      <td>${s.cause}</td>
+      <td><span class="sev ${s.severity}">${s.severity}</span></td>
+    </tr>
+  `).join('');
+  document.getElementById('table-count').textContent = `Showing ${data.length} of ${blackSpots.length} locations`;
+}
 
-  // Highlight active nav link on scroll
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks  = document.querySelectorAll('nav a');
-
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 80) current = s.id;
-    });
-    navLinks.forEach(a => {
-      a.style.color = a.getAttribute('href') === '#' + current
-        ? '#fff' : '';
-    });
+// ── FILTERS ──
+function populateCauseFilter(){
+  const causes = [...new Set(blackSpots.map(s=>s.cause))];
+  const sel = document.getElementById('cause-filter');
+  causes.forEach(c=>{
+    const o=document.createElement('option');
+    o.value=c; o.textContent=c;
+    sel.appendChild(o);
   });
+}
+
+function applyFilters(){
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const sv = document.getElementById('sev-filter').value;
+  const ca = document.getElementById('cause-filter').value;
+  const filtered = blackSpots.filter(s=>{
+    const matchQ = !q || s.name.toLowerCase().includes(q) || s.cause.toLowerCase().includes(q) || s.area.toLowerCase().includes(q);
+    const matchS = !sv || s.severity===sv;
+    const matchC = !ca || s.cause===ca;
+    return matchQ && matchS && matchC;
+  });
+  renderTable(filtered);
+}
+
+document.getElementById('search-input').addEventListener('input', applyFilters);
+document.getElementById('sev-filter').addEventListener('change', applyFilters);
+document.getElementById('cause-filter').addEventListener('change', applyFilters);
+
+// ── MAP ──
+function initMap(){
+  const map = L.map('map',{zoomControl:true}).setView([13.0827,80.2707],11);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'© OpenStreetMap contributors © CARTO',
+    maxZoom:19
+  }).addTo(map);
+
+  blackSpots.forEach(s=>{
+    const color = sevColor(s.severity);
+    const marker = L.circleMarker([s.lat,s.lng],{
+      radius:s.severity==='high'?12:s.severity==='medium'?9:7,
+      fillColor:color,
+      color:'#fff',
+      weight:1.5,
+      opacity:0.9,
+      fillOpacity:0.85
+    }).addTo(map);
+
+    marker.bindPopup(`
+      <div style="font-family:'DM Sans',sans-serif;min-width:180px;">
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px;">${s.name}</div>
+        <div style="font-size:12px;color:#888;margin-bottom:6px;">${s.area}</div>
+        <div style="font-size:12px;margin-bottom:4px;">⚠ ${s.cause}</div>
+        <div style="font-size:12px;margin-bottom:6px;">🔢 ${s.accidents} accidents/yr</div>
+        <span style="background:${color};color:#fff;padding:2px 8px;border-radius:2px;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">${s.severity}</span>
+      </div>
+    `);
+  });
+
+  window._map = map;
+  window._L = L;
+}
+
+// ── SUBMIT REPORT ──
+function submitReport(e){
+  e.preventDefault();
+  const loc  = document.getElementById('r-loc').value.trim();
+  const area = document.getElementById('r-area').value.trim();
+  const cause= document.getElementById('r-cause').value.trim();
+  const sev  = document.getElementById('r-sev').value;
+  const desc = document.getElementById('r-desc').value.trim();
+
+  if(!loc||!desc){ alert('Please fill in Location Name and Description.'); return; }
+
+  const report = { loc, area:area||'Unknown', cause:cause||'Not specified', sev, desc, time: new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}) };
+  userReports.unshift(report);
+
+  renderReports();
+  updateReportCount();
+  addReportMarker(report);
+
+  document.getElementById('report-form').reset();
+  const msg = document.getElementById('success-msg');
+  msg.style.display='block';
+  setTimeout(()=>msg.style.display='none', 4000);
+}
+
+function renderReports(){
+  const list = document.getElementById('reports-list');
+  if(userReports.length===0){
+    list.innerHTML='<div class="empty-reports">No reports yet. Be the first to report a black spot!</div>';
+    return;
+  }
+  list.innerHTML = userReports.map(r=>`
+    <div class="report-item">
+      <div class="r-loc">📍 ${r.loc} <span style="font-weight:400;font-size:11px;color:var(--grey);">(${r.area})</span></div>
+      <div class="r-desc">${r.desc}</div>
+      <div class="r-meta">
+        <span>⚠ ${r.cause}</span>
+        <span class="r-sev sev ${r.sev}">${r.sev}</span>
+        <span>🕐 ${r.time}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateReportCount(){
+  document.getElementById('report-count').textContent = userReports.length;
+  document.getElementById('total-reports').textContent = userReports.length;
+}
+
+// Add user report as purple marker on map
+function addReportMarker(r){
+  if(!window._map) return;
+  const lat = 13.0827 + (Math.random()-0.5)*0.15;
+  const lng = 80.2707 + (Math.random()-0.5)*0.15;
+  const marker = window._L.circleMarker([lat,lng],{
+    radius:8,fillColor:'#9b59b6',color:'#fff',weight:1.5,opacity:0.9,fillOpacity:0.85
+  }).addTo(window._map);
+  marker.bindPopup(`
+    <div style="font-family:'DM Sans',sans-serif;min-width:160px;">
+      <div style="font-weight:700;font-size:13px;margin-bottom:3px;">👤 User Report</div>
+      <div style="font-weight:600;font-size:13px;margin-bottom:4px;">${r.loc}</div>
+      <div style="font-size:12px;color:#888;margin-bottom:4px;">${r.area}</div>
+      <div style="font-size:12px;">${r.desc.substring(0,80)}${r.desc.length>80?'...':''}</div>
+    </div>
+  `);
+}
+
+// ── SCROLL FADE IN ──
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('vis'); observer.unobserve(e.target); }});
+},{threshold:0.08});
+document.querySelectorAll('.fi').forEach(el=>observer.observe(el));
+
+// ── ACTIVE NAV ──
+const sections = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('nav a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sections.forEach(s=>{ if(window.scrollY>=s.offsetTop-90) cur=s.id; });
+  navLinks.forEach(a=>{ a.classList.toggle('active', a.getAttribute('href')==='#'+cur); });
+});
+
+// ── INIT ──
+renderCards();
+renderTable(blackSpots);
+populateCauseFilter();
+initMap();
 </script>
 </body>
 </html>
